@@ -5,6 +5,7 @@ from django.utils import timezone
 from django.contrib.auth.models import User
 from django.core.urlresolvers import reverse
 from taggit.managers import TaggableManager
+from django.template.defaultfilters import slugify
 #Model Managers
 class PublishedManager(models.Manager):
     def get_queryset(self):
@@ -40,6 +41,11 @@ class Post(models.Model):
                               self.publish.strftime('%m'),
                               self.publish.strftime('%d'),
                               self.slug])
+    def save(self, *args, **kwargs):
+        if self.id is None:
+            self.slug = slugify(self.title)
+        self.slug = slugify(self.title)
+        super(Post, self).save(*args, **kwargs)
 
 class Comment(models.Model):
     post = models.ForeignKey(Post, related_name='comments')

@@ -371,7 +371,7 @@ textarea {
   font-size: 15px;
   color: #444444;
 }
-.post-card, .add-comment, .similar-post, .comments{
+.post-card, .add-comment, .similar-post, .comments, .add-post{
   padding: 10px;
   background: white;
   border: 1px solid #d0cbcb;

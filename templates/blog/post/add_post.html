@@ -1,0 +1,31 @@
+{% extends 'blog/base.html' %}
+
+{% block title %}Add Post{% endblock %}
+
+{% block content %}
+<div class="add-post">
+  <form action="" method="POST">
+       <div class="form-group">
+         <label for="name">Title</label>
+         <input type="text" name="title" required="" id="id_title" maxlength="250" class = "input-text">
+       </div>
+       <div class="form-group">
+         <label for="body">Body</label>
+         <textarea name="body" id="id_body" rows="10" cols="40" required="" class = "input-text"></textarea>
+       </div>
+       <div class="form-group">
+         <label for="tags">Tags:</label>
+         <input type="text" name="tags" required="" id="id_tags" class = "input-text">
+       </div>
+       <div class="form-group">
+         <select name="status" id="id_status">
+            <option value="draft" selected="">Draft</option>
+            <option value="published">Published</option>
+          </select>
+       </div>
+       <input class="btn btn-primary" type="submit" value="Create"/>
+       {% csrf_token %}
+  </form>
+</div>
+
+{% endblock %}

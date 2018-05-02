@@ -4,11 +4,13 @@ from __future__ import unicode_literals
 from django.shortcuts import render, get_object_or_404
 from .models import Post, Comment
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
-from django.views.generic import ListView
-from .forms import EmailPostForm, CommentForm
+from django.views.generic import ListView, CreateView
+from .forms import EmailPostForm, CommentForm, PostPageForm
 from django.core.mail import send_mail
 from taggit.models import Tag
 from django.db.models import Count
+from django.http import HttpResponse
+
 # Create your views here.
 def post_list(request, tag_slug=None):
     posts = Post.published.all()
@@ -67,6 +69,18 @@ def post_detail(request, year, month, day, slug):
     return render(request, 'blog/post/detail.html', context)
 
 #class based view
+class AddPostView(CreateView):
+    form_class = PostPageForm
+    success_url = '/blog/'
+    template_name = 'blog/post/add_post.html'
+
+    def form_valid(self, form):
+        print self.request.POST['title']
+        new_post = form.save(commit = False)
+        new_post.author_id = self.request.user.id
+        new_post.save()
+        return super(AddPostView, self).form_valid(form)
+
 class PostListView(ListView):
     queryset = Post.published.all()
     context_object_name = 'posts'
