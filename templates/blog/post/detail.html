@@ -1,58 +1,77 @@
 {% extends 'blog/base.html' %}
+{% load blog_tags %}
 
 {% block title %}{{ post.title }}{% endblock %}
 
 {% block content %}
+<div class="post-card">
   <h1>{{post.title}}</h1>
   <p class="date">
     Published {{ post.publish }} by {{ post.author }}
   </p>
-  {{ post.body | linebreaks}}
+  {{ post.body | markdown }}
 
   <p>
     <a href="{% url 'blog:post_share' post.id %}">Share!</a>
   </p>
+</div>
 
-
-  {% if new_comment %}
-    <h2>Your comment has been added</h2>
-  {% else %}
-    <h2>Add a comment</h2>
-    <form action="." method = 'POST'>
-      {{ comment_form.as_p }}
-      {% csrf_token %}
-      <p><input type="submit" value = "Comment"></p>
-    </form>
-  {% endif %}
+  
 
   <!-- Similar Posts -->
-  <h2>Similar Posts</h2>
-  {% for post in similar_post %}
-  <p>
-      <a href="{{post.get_absolute_url}}">{{ post.title }}</a>
-  </p>
-  {% empty %}
-    <h2>There are no similar posts yet.</h2>
-  {% endfor %}
-
-
+  <div class="similar-post">
+    <h2>Similar Posts</h2>
+    {% for post in similar_post %}
+    <p>
+        <a href="{{post.get_absolute_url}}">{{ post.title }}</a>
+    </p>
+    {% empty %}
+      <h2>There are no similar posts yet.</h2>
+    {% endfor %}
+  </div>
 
   <!-- Comments -->
-  {% with comments.count as total_comments %}
-  <h2>
-    {{ total_comments }} comment {{total_comments|pluralize}}
-  </h2>
-  {% endwith %}
+  <div class="comments">
+    {% if new_comment %}
+      <h2>Your comment has been added</h2>
+    {% else %}
+      <h2>Add a comment</h2>
+      <form action="." method = 'POST'>
 
-  {% for comment in comments %}
-    <div class="comment">
-      <p class="info">
-        Comment {{forloop.counter}} by {{comment.name}}
-        {{comment.created}}
-      </p>
-      {{comment.body|linebreaks}}
-    </div>
-    {% empty %}
-    <p>There are no comments.</p>
-  {% endfor %}
+        <div class="form-group">
+          <label for="name">Name</label>
+          <input type="text" name="name" required="" id="id_name" maxlength="80" class = "input-text">
+        </div>
+        <div class="form-group">
+          <label for="email">E-mail</label>
+        <input type="email" name="email" required="" id="id_email" maxlength="254" class = "input-text">
+        </div>
+        <div class="form-group">
+          <label for="body">Body</label>
+          <textarea name="body" id="id_body" rows="10" cols="40" required="" class = "input-text"></textarea>
+        </div>
+
+        {% csrf_token %}
+        <p><input type="submit" value = "Comment" class="submit"></p>
+      </form>
+    {% endif %}
+
+    {% with comments.count as total_comments %}
+    <h2>
+      {{ total_comments }} comment {{total_comments|pluralize}}
+    </h2>
+    {% endwith %}
+
+    {% for comment in comments %}
+      <div class="comment">
+        <p class="info">
+          Comment {{forloop.counter}} by {{comment.name}}
+          {{comment.created}}
+        </p>
+        {{comment.body|linebreaks}}
+      </div>
+      {% empty %}
+      <p>There are no comments.</p>
+    {% endfor %}
+  </div>
 {% endblock %}
